@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+
+	<select id="getlist" parameterType="int" resultType="com.mysite.vo.BoardVo">
+		<![CDATA[
+		
+		select b.no no,
+		b.title title,
+		u.name userName,
+		b.content content,
+		b.hit hit ,
+		b.reg_date regDate,
+		user_no userNo ,
+        group_no,order_no,depth
+		from ReplyBoard b,
+		users u 
+		where b.user_no=u.no
+		order by group_no  desc , order_no asc
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType= "com.mysite.vo.BoardVo">
+		<![CDATA[
+			insert into  ReplyBoard values (seq_replyboard_no.nextval,#{title},#{content},0,SYSDATE,#{userNo},seq_replyboard_no.currval,0,0,#{no})
+		
+		]]>
+	</insert>
+	
+	<delete id="delete" parameterType="com.mysite.vo.BoardVo">
+		<![CDATA[
+				delete from ReplyBoard where group_no=#{groupNo}
+			
+			]]>
+	</delete>
+	<delete id="delete2" parameterType="com.mysite.vo.BoardVo">
+		<![CDATA[
+				delete from REPLYBOARD   where bparent>#{bparent} and group_no=#{groupNo} and depth>#{depth}
+			]]>
+	</delete>
+	<delete id="delete3" parameterType="com.mysite.vo.BoardVo">
+		<![CDATA[
+				delete from REPLYBOARD   where no=#{noS}
+			]]>
+	</delete>
+	<select id="selectOne" parameterType="int" resultType="com.mysite.vo.BoardVo">
+		<![CDATA[								
+			select title ,content ,user_NO userNo from ReplyBoard where no=#{no}
+		]]>
+		</select>
+
+	<update id="updatehit" parameterType="com.mysite.vo.BoardVo">
+	
+	<![CDATA[
+			update ReplyBoard set hit=hit+1 where no=#{no}
+		]]>
+		
+	</update>
+	<update id="update" parameterType="com.mysite.vo.BoardVo">
+	
+	<![CDATA[
+			update ReplyBoard set title=#{title},content=#{content} where no=#{no}
+		]]>
+		
+	</update>
+
+
+	<select id="selectreplyboard" parameterType="com.mysite.vo.BoardVo" resultType="com.mysite.vo.BoardVo">
+		<![CDATA[
+			select group_no groupNo,order_no orderNo,depth,bparent from replyboard where no =#{no}
+		]]>
+		</select>
+
+
+	<insert id="replywrite"  parameterType="com.mysite.vo.BoardVo" >
+	<![CDATA[
+	insert into  ReplyBoard values (seq_replyboard_no.nextval,#{title},#{content},0,SYSDATE,#{userNo},#{groupNo},#{orderNo}+1,#{depth}+1,#{no})
+	]]>
+	</insert>
+	
+	<update id="updateordern" parameterType="com.mysite.vo.BoardVo">
+	update REPLYBOARD set order_No =(order_No)+1 where group_no =#{groupNo} and order_no >#{orderNo} 
+	</update>
+</mapper>
