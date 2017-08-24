@@ -40,6 +40,7 @@ public class BoardController {
 		UserVo authUser= (UserVo)session.getAttribute("authUser");
 		int no=authUser.getNo();		
 		vo.setUserNo(no);
+		System.out.println(no);
 		boardservice.insert(vo);	
 		
 		return "redirect:/bd/list";
